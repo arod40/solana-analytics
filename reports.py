@@ -1,13 +1,11 @@
 from http.client import responses
 from typing import List, Union
 
+import matplotlib.pyplot as plt
 from solana.rpc.api import Client
 
-from utils import JSONable, Report
 from models import BlockStakeCommitment
-
-import matplotlib.pyplot as plt
-
+from utils import JSONable, Report
 from utils.constants import COMMITMENT, RESULT, TOTAL_STAKE
 from utils.plot import plot_bars
 
