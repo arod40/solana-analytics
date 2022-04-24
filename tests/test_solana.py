@@ -1,8 +1,5 @@
-import os
-
+from config import *
 from solana.rpc.api import Client
-
-CLUSTER = os.getenv("SOLANA_CLUSTER") or "devnet"
 
 
 def test_connectivity():
