@@ -37,6 +37,7 @@ dependencies:
     - jsonrpcserver==5.0.7
     - jsonschema==4.4.0
     - mypy-extensions==0.4.3
+    - numpy==1.22.3
     - oslash==0.6.3
     - packaging==21.3
     - pathspec==0.9.0
