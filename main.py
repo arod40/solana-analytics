@@ -13,3 +13,9 @@ http_client = Client(f"https://api.{CLUSTER}.solana.com")
 
 
 report = BlocksReport.capture({}, http_client, [129670496])
+
+
+import json
+
+with open("a.json", "w") as fp:
+    json.dump(report.to_json(), fp)

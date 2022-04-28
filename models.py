@@ -39,7 +39,19 @@ class Block(Model):
         raise NotImplementedError
 
     def to_json(self):
-        raise NotImplementedError
+        return {
+            "slot": self.slot,
+            "commitment": self.commitment,
+            "blockhash": self.blockhash,
+            "previous_blockhash": self.previous_blockhash,
+            "parent_slot": self.parent_slot,
+            "rewards": self.rewards,
+            "block_time": self.block_time,
+            "block_height": self.block_height,
+            "transactions": self.transactions,
+            "signatures": self.signatures,
+            "transactions": [tr.to_json() for tr in self.transactions],
+        }
 
     @property
     def can_change(self):
@@ -69,6 +81,19 @@ class Transaction(Model):
     def _id(self):
         return self.signatures[0]
 
+    def to_json(self):
+        return {
+            "signatures": self.signatures,
+            "block": self.block,
+            "err": self.err,
+            "fee": self.fee,
+            "rewards": self.rewards,
+            "transaction_accounts": [
+                tr_acc.to_json() for tr_acc in self.transaction_accounts
+            ],
+            "transaction_instructions": [],
+        }
+
 
 class AccountTransaction(Model):
     def __init__(
@@ -92,6 +117,17 @@ class AccountTransaction(Model):
     @property
     def _id(self):
         return (self.transaction_id, self.pubkey)
+
+    def to_json(self):
+        return {
+            "pubkey": self.pubkey,
+            "transaction_id": self.transaction_id,
+            "pre_balance": self.pre_balance,
+            "post_balance": self.post_balance,
+            "read_only": self.read_only,
+            "signed": self.signed,
+            "signature": self.signature,
+        }
 
 
 class BlockStakeCommitment(Model):

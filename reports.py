@@ -88,6 +88,20 @@ class BlocksReport(Report):
         self.metadata = metadata
         self.results = results
 
+    def to_json(self):
+        return {
+            "blocks": {
+                key: block.to_json() for key, block in self.results["blocks"].items()
+            },
+            "transactions": {
+                key: tr.to_json() for key, tr in self.results["transactions"].items()
+            },
+            "transactions_accounts": {
+                key: tr_acc.to_json()
+                for key, tr_acc in self.results["transactions_accounts"].items()
+            },
+        }
+
     @classmethod
     def parse_block(cls, block_json, slot, commitment):
         return (
@@ -105,10 +119,11 @@ class BlocksReport(Report):
         )
 
     @classmethod
-    def parse_transaction(cls, transaction_json):
+    def parse_transaction(cls, transaction_json, slot):
         transaction = Transaction(
+            block=slot,
             signatures=transaction_json[TRANSACTION][SIGNATURES],
-            err=transaction_json[META],
+            err=transaction_json[META][ERR],
             fee=transaction_json[META][FEE],
             rewards=transaction_json[META][REWARDS],
             transaction_instructions=transaction_json[TRANSACTION][MESSAGE][
@@ -178,7 +193,7 @@ class BlocksReport(Report):
             block, block_transactions = cls.parse_block(block_json, slot, FINALIZED)
 
             for transaction_json in tqdm(block_transactions):
-                transaction = cls.parse_transaction(transaction_json)
+                transaction = cls.parse_transaction(transaction_json, slot)
 
                 transactions[transaction._id] = transaction
                 block.transactions.append(transaction)
