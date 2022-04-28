@@ -70,35 +70,19 @@ class Transaction(Model):
         return self.signatures[0]
 
 
-class Account(Model):
-    def __init__(
-        self, pubkey, executable, owner, rent_epoch, data, account_transactions=[]
-    ):
-        self.pubkey = pubkey
-        self.executable = executable
-        self.owner = owner
-        self.rent_epoch = rent_epoch
-        self.data = data
-        self.account_transactions = account_transactions
-
-    @property
-    def _id(self):
-        return self.pubkey
-
-
 class AccountTransaction(Model):
     def __init__(
         self,
-        pre_balance,
-        post_balance,
-        read_only,
-        signed,
         transaction_id=None,
-        account_id=None,
+        pubkey=None,
+        pre_balance=None,
+        post_balance=None,
+        read_only=None,
+        signed=None,
         signature=None,
     ):
+        self.pubkey = pubkey
         self.transaction_id = transaction_id
-        self.account_id = account_id
         self.pre_balance = pre_balance
         self.post_balance = post_balance
         self.read_only = read_only
@@ -107,18 +91,10 @@ class AccountTransaction(Model):
 
     @property
     def _id(self):
-        return (self.transaction_id, self.account_id)
+        return (self.transaction_id, self.pubkey)
 
 
 class BlockStakeCommitment(Model):
     def __init__(self, stake_votes, total_epoch_active_stake):
         self.stake_votes = stake_votes
         self.total_epoch_active_stake = total_epoch_active_stake
-
-
-class Instruction(Model):
-    pass
-
-
-class InstructionAccount(Model):
-    pass

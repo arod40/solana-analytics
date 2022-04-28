@@ -3,7 +3,7 @@ from typing import List, Union
 import matplotlib.pyplot as plt
 from solana.rpc.api import Client
 
-from models import Account, AccountTransaction, BlockStakeCommitment, Block, Transaction
+from models import AccountTransaction, BlockStakeCommitment, Block, Transaction
 from utils import JSONable, Report
 from utils.constants import *
 from utils.plot import plot_bars
@@ -106,21 +106,22 @@ class BlocksReport(Report):
 
     @classmethod
     def parse_transaction(cls, transaction_json):
-        return (
-            Transaction(
-                signatures=transaction_json[TRANSACTION][SIGNATURES],
-                err=transaction_json[META],
-                fee=transaction_json[META][FEE],
-                rewards=transaction_json[META][REWARDS],
-                transaction_instructions=transaction_json[TRANSACTION][MESSAGE][
-                    INSTRUCTIONS
-                ],
-            ),
-            cls.parse_transaction_accounts(transaction_json),
+        transaction = Transaction(
+            signatures=transaction_json[TRANSACTION][SIGNATURES],
+            err=transaction_json[META],
+            fee=transaction_json[META][FEE],
+            rewards=transaction_json[META][REWARDS],
+            transaction_instructions=transaction_json[TRANSACTION][MESSAGE][
+                INSTRUCTIONS
+            ],
         )
+        transaction.transaction_accounts = cls.parse_transaction_accounts(
+            transaction_json, transaction._id
+        )
+        return transaction
 
     @classmethod
-    def parse_transaction_accounts(cls, transaction_json):
+    def parse_transaction_accounts(cls, transaction_json, transaction_id):
         account_keys = transaction_json[TRANSACTION][MESSAGE][ACCOUNT_KEYS]
         pre_balances = transaction_json[META][PRE_BALANCES]
         posts_balances = transaction_json[META][POST_BALANCES]
@@ -144,31 +145,20 @@ class BlocksReport(Report):
         signatures = transaction_json[TRANSACTION][SIGNATURES] + [None] * (
             len(account_keys) - num_required_signatures
         )
-        return zip(
-            account_keys,
-            [
-                AccountTransaction(
-                    pre_balance=pre_balance,
-                    post_balance=post_balance,
-                    read_only=is_readonly,
-                    signed=is_signed,
-                    signature=signature,
-                )
-                for pre_balance, post_balance, is_readonly, is_signed, signature in zip(
-                    pre_balances, posts_balances, readonly, signed, signatures
-                )
-            ],
-        )
-
-    @classmethod
-    def parse_account(cls, account_json, pubkey):
-        return Account(
-            pubkey=pubkey,
-            executable=account_json[VALUE][EXECUTABLE],
-            owner=account_json[VALUE][OWNER],
-            rent_epoch=account_json[VALUE][RENT_EPOCH],
-            data=account_json[VALUE][DATA],
-        )
+        return [
+            AccountTransaction(
+                transaction_id=transaction_id,
+                pubkey=pubkey,
+                pre_balance=pre_balance,
+                post_balance=post_balance,
+                read_only=is_readonly,
+                signed=is_signed,
+                signature=signature,
+            )
+            for pubkey, pre_balance, post_balance, is_readonly, is_signed, signature in zip(
+                account_keys, pre_balances, posts_balances, readonly, signed, signatures
+            )
+        ]
 
     @classmethod
     def capture(
@@ -179,10 +169,7 @@ class BlocksReport(Report):
     ):
         blocks = {}
         transactions = {}
-        accounts = {}
-        # instructions = []
         transactions_accounts = {}
-        # instructions_accounts = []
 
         for slot in blocks_slots:
             print("Processing block", slot)
@@ -191,24 +178,7 @@ class BlocksReport(Report):
             block, block_transactions = cls.parse_block(block_json, slot, FINALIZED)
 
             for transaction_json in tqdm(block_transactions):
-                transaction, transaction_accounts = cls.parse_transaction(
-                    transaction_json
-                )
-
-                # for account_pubkey, transaction_account in transaction_accounts:
-                #     account_json = api_client.get_account_info(account_pubkey)[RESULT]
-                #     account = None
-                #     if account_json[VALUE] is not None:
-                #         account = cls.parse_account(account_json, account_pubkey)
-                #         if account._id not in accounts:
-                #             accounts[account._id] = account
-                #         transaction_account.account_id = account._id
-                #         account.account_transactions.append(transaction_account)
-
-                #     transaction_account.transaction_id = transaction._id
-                #     transaction.transaction_accounts.append(transaction_account)
-
-                #     transactions_accounts[transaction_account._id] = transaction_account
+                transaction = cls.parse_transaction(transaction_json)
 
                 transactions[transaction._id] = transaction
                 block.transactions.append(transaction)
@@ -220,7 +190,6 @@ class BlocksReport(Report):
             {
                 "blocks": blocks,
                 "transactions": transactions,
-                "accounts": accounts,
                 "transactions_accounts": transactions_accounts,
             },
         )
