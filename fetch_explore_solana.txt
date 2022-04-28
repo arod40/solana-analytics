@@ -1,0 +1,722 @@
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20DISTINCT(%22id%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-new%22%20&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/annotations?from=1651177013014&to=1651180613014&limit=100&matchAny=false&dashboardId=11", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20last(%22leader%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22replay_stage-new_leader%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20ORDER%20BY%20%22time%22%20desc%20%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20LAST(median)%20FROM%20(%20SELECT%20median(live_count)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20live_count%20%3E%200%20GROUP%20BY%20time(5s)%20)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20ROUND(MEAN(%22sum%22))%2F10%20FROM%20(%20SELECT%20MEDIAN(tx_count)%20AS%20sum%20FROM%20(SELECT%20SUM(%22count%22)%20%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20GROUP%20BY%20time(10s)%20)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MAX(%22median_sum%22)%2F10%20FROM%20(%20SELECT%20MEDIAN(tx_count)%20AS%20median_sum%20FROM%20(SELECT%20SUM(%22count%22)%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20GROUP%20BY%20time(10s)%20)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(tx_count)%20AS%20transactions%20FROM%20(SELECT%20SUM(%22count%22)%20%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20host_id)%20WHERE%20tx_count%20%3E%200%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(%22vote_count%22)%20FROM%20(%20SELECT%20sum(%22count%22)%20as%20vote_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22vote-native%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20GROUP%20BY%20host_id%20)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20median(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20min(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20max(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20percentile(%22duration_ms%22%2C%2099)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(%22host_count%22)%20AS%20%22total%22%20FROM%20(%20SELECT%20COUNT(%22count%22)%2F10%20as%20host_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22vote-native%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%2C%20host_id%20)%20GROUP%20BY%20time(10s)%20fill(0)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20median(%22broadcast_count%22)%20AS%20%22broadcast_total%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20broadcast_count%20%3E%200%20GROUP%20BY%20time(10s)%3BSELECT%20median(%22live_count%22)%20AS%20%22live_total%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20live_count%20%3E%200%20GROUP%20BY%20time(10s)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20sum(%22count%22)%20%2F%2010%20AS%20%22packets%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22packets-recv_count%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%0A%3BSELECT%20sum(%22count%22)%20%2F%2010%20AS%20%22errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions-error_count%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%3Bselect%20median(%22tx_count%22)%20as%20%22transactions%22%20from%20(select%20sum(%22count%22)%20%2F%2010%20%20as%20%22tx_count%22%20from%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20where%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20group%20by%20time(10s)%20fill(0)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20host_id%3A%3Atag%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22packets_received%22)%20as%20%22packets_received%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22receive_errors%22)%20as%20%22receive_errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22rcvbuf_errors%22)%20as%20%22rcvbuf_errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22packets_sent%22)%20as%20%22packets_sent%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22in_octets%22)%20as%20%22recv%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%3BSELECT%20mean(%22out_octets%22)%20as%20%22sent%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20DISTINCT(%22id%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-new%22%20&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/annotations?from=1651177019850&to=1651180619850&limit=100&matchAny=false&dashboardId=11", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20last(%22leader%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22replay_stage-new_leader%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20ORDER%20BY%20%22time%22%20desc%20%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20LAST(median)%20FROM%20(%20SELECT%20median(live_count)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20live_count%20%3E%200%20GROUP%20BY%20time(5s)%20)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20ROUND(MEAN(%22sum%22))%2F10%20FROM%20(%20SELECT%20MEDIAN(tx_count)%20AS%20sum%20FROM%20(SELECT%20SUM(%22count%22)%20%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20GROUP%20BY%20time(10s)%20)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MAX(%22median_sum%22)%2F10%20FROM%20(%20SELECT%20MEDIAN(tx_count)%20AS%20median_sum%20FROM%20(SELECT%20SUM(%22count%22)%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20GROUP%20BY%20time(10s)%20)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(tx_count)%20AS%20transactions%20FROM%20(SELECT%20SUM(%22count%22)%20%20AS%20tx_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20host_id)%20WHERE%20tx_count%20%3E%200%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(%22vote_count%22)%20FROM%20(%20SELECT%20sum(%22count%22)%20as%20vote_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22vote-native%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20GROUP%20BY%20host_id%20)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20median(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20min(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20max(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20percentile(%22duration_ms%22%2C%2099)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20MEDIAN(%22host_count%22)%20AS%20%22total%22%20FROM%20(%20SELECT%20COUNT(%22count%22)%2F10%20as%20host_count%20FROM%20%22mainnet-beta%22.%22autogen%22.%22vote-native%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%2C%20host_id%20)%20GROUP%20BY%20time(10s)%20fill(0)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20median(%22broadcast_count%22)%20AS%20%22broadcast_total%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20broadcast_count%20%3E%200%20GROUP%20BY%20time(10s)%3BSELECT%20median(%22live_count%22)%20AS%20%22live_total%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22cluster_info-num_nodes%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20live_count%20%3E%200%20GROUP%20BY%20time(10s)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20sum(%22count%22)%20%2F%2010%20AS%20%22packets%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22packets-recv_count%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%0A%3BSELECT%20sum(%22count%22)%20%2F%2010%20AS%20%22errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions-error_count%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%3Bselect%20median(%22tx_count%22)%20as%20%22transactions%22%20from%20(select%20sum(%22count%22)%20%2F%2010%20%20as%20%22tx_count%22%20from%20%22mainnet-beta%22.%22autogen%22.%22bank-process_transactions%22%20where%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20AND%20count%20%3E%200%20GROUP%20BY%20time(10s)%2C%20host_id)%20group%20by%20time(10s)%20fill(0)&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22duration_ms%22)%20FROM%20%22mainnet-beta%22.%22autogen%22.%22validator-confirmation%22%20WHERE%20host_id%3A%3Atag%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20GROUP%20BY%20time(10s)%20FILL(0)%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22packets_received%22)%20as%20%22packets_received%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22receive_errors%22)%20as%20%22receive_errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22rcvbuf_errors%22)%20as%20%22rcvbuf_errors%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A%3BSELECT%20mean(%22packets_sent%22)%20as%20%22packets_sent%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20%20hostname%20%3D~%20%2F.*%2F%20AND%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+}); ;
+fetch("https://metrics.solana.com:3000/api/datasources/proxy/1/query?db=mainnet-beta&q=SELECT%20mean(%22in_octets%22)%20as%20%22recv%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A%3BSELECT%20mean(%22out_octets%22)%20as%20%22sent%22%20FROM%20%22mainnet-beta%22.%22autogen%22.%22net-stats%22%20WHERE%20time%20%3E%3D%20now()%20-%201h%20and%20time%20%3C%3D%20now()%20%20%20GROUP%20BY%20time(10s)%20fill(null)%0A%0A&epoch=ms", {
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,es;q=0.8",
+    "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"100\", \"Microsoft Edge\";v=\"100\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-grafana-org-id": "1"
+  },
+  "referrer": "https://metrics.solana.com:3000/d/monitor-edge/cluster-telemetry-edge?orgId=1&refresh=10s",
+  "referrerPolicy": "strict-origin-when-cross-origin",
+  "body": null,
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+});
