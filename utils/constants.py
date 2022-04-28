@@ -32,6 +32,8 @@ NUM_READONLY_SIGNED_ACCOUNTS = "numReadonlySignedAccounts"
 NUM_READONLY_UNSIGNED_ACCOUNTS = "numReadonlyUnsignedAccounts"
 NUM_REQUIRED_SIGNATURES = "numRequiredSignatures"
 VALUE = "value"
+ACCOUNTS = "accounts"
+PROGRAM_ID_INDEX = "programIdIndex"
 
 
 RESULT = "result"

@@ -91,7 +91,9 @@ class Transaction(Model):
             "transaction_accounts": [
                 tr_acc.to_json() for tr_acc in self.transaction_accounts
             ],
-            "transaction_instructions": [],
+            "transaction_instructions": [
+                tr_inst.to_json() for tr_inst in self.transaction_instructions
+            ],
         }
 
 
@@ -127,6 +129,35 @@ class AccountTransaction(Model):
             "read_only": self.read_only,
             "signed": self.signed,
             "signature": self.signature,
+        }
+
+
+class InstructionTransaction(Model):
+    def __init__(
+        self,
+        transaction_id=None,
+        instruction_idx=None,
+        accounts=None,
+        data=None,
+        program_account=None,
+    ):
+        self.transaction_id = transaction_id
+        self.instruction_idx = instruction_idx
+        self.accounts = accounts
+        self.data = data
+        self.program_account = program_account
+
+    @property
+    def _id(self):
+        return (self.transaction_id, self.instruction_idx)
+
+    def to_json(self):
+        return {
+            "transaction_id": self.transaction_id,
+            "instruction_idx": self.instruction_idx,
+            "accounts": self.accounts,
+            "data": self.data,
+            "program_account": self.program_account,
         }
 
 

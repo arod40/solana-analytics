@@ -2,12 +2,18 @@ from typing import List, Union
 
 import matplotlib.pyplot as plt
 from solana.rpc.api import Client
+from tqdm import tqdm
 
-from models import AccountTransaction, BlockStakeCommitment, Block, Transaction
+from models import (
+    AccountTransaction,
+    Block,
+    BlockStakeCommitment,
+    InstructionTransaction,
+    Transaction,
+)
 from utils import JSONable, Report
 from utils.constants import *
 from utils.plot import plot_bars
-from tqdm import tqdm
 
 
 class BlockCommitmentReport(Report):
@@ -89,18 +95,7 @@ class BlocksReport(Report):
         self.results = results
 
     def to_json(self):
-        return {
-            "blocks": {
-                key: block.to_json() for key, block in self.results["blocks"].items()
-            },
-            "transactions": {
-                key: tr.to_json() for key, tr in self.results["transactions"].items()
-            },
-            "transactions_accounts": {
-                key: tr_acc.to_json()
-                for key, tr_acc in self.results["transactions_accounts"].items()
-            },
-        }
+        return {key: block.to_json() for key, block in self.results["blocks"].items()}
 
     @classmethod
     def parse_block(cls, block_json, slot, commitment):
@@ -131,6 +126,9 @@ class BlocksReport(Report):
             ],
         )
         transaction.transaction_accounts = cls.parse_transaction_accounts(
+            transaction_json, transaction._id
+        )
+        transaction.transaction_instructions = cls.parse_transaction_instructions(
             transaction_json, transaction._id
         )
         return transaction
@@ -176,6 +174,23 @@ class BlocksReport(Report):
         ]
 
     @classmethod
+    def parse_transaction_instructions(cls, transaction_json, transaction_id):
+
+        account_keys = transaction_json[TRANSACTION][MESSAGE][ACCOUNT_KEYS]
+        return [
+            InstructionTransaction(
+                transaction_id=transaction_id,
+                instruction_idx=idx,
+                accounts=[account_keys[i] for i in instruction_json[ACCOUNTS]],
+                data=instruction_json[DATA],
+                program_account=account_keys[instruction_json[PROGRAM_ID_INDEX]],
+            )
+            for idx, instruction_json in enumerate(
+                transaction_json[TRANSACTION][MESSAGE][INSTRUCTIONS]
+            )
+        ]
+
+    @classmethod
     def capture(
         cls,
         metadata: Union[JSONable, List[JSONable], dict],
@@ -184,7 +199,6 @@ class BlocksReport(Report):
     ):
         blocks = {}
         transactions = {}
-        transactions_accounts = {}
 
         for slot in blocks_slots:
             print("Processing block", slot)
@@ -205,6 +219,5 @@ class BlocksReport(Report):
             {
                 "blocks": blocks,
                 "transactions": transactions,
-                "transactions_accounts": transactions_accounts,
             },
         )
