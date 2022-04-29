@@ -14,6 +14,7 @@ from models import (
 from utils import JSONable, Report
 from utils.constants import *
 from utils.plot import plot_bars
+import time
 
 
 class BlockCommitmentReport(Report):
@@ -200,10 +201,15 @@ class BlocksReport(Report):
         blocks = {}
         transactions = {}
 
-        for slot in blocks_slots:
-            print("Processing block", slot)
+        for i, slot in enumerate(blocks_slots):
+            print(f"Processing block {i+1}/{len(blocks_slots)}: {slot}")
 
-            block_json = api_client.get_block(slot)[RESULT]
+            block_json = api_client.get_block(slot)
+            if RESULT not in block_json:
+                print("Skipped!")
+                continue
+
+            block_json = block_json[RESULT]
             block, block_transactions = cls.parse_block(block_json, slot, FINALIZED)
 
             for transaction_json in tqdm(block_transactions):
@@ -213,6 +219,8 @@ class BlocksReport(Report):
                 block.transactions.append(transaction)
 
             blocks[block._id] = block
+
+            time.sleep(10)
 
         return cls(
             metadata,
