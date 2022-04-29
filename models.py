@@ -35,8 +35,21 @@ class Block(Model):
         return self.slot
 
     @classmethod
-    def from_json(cls, json_str: Union[str, Path]):
-        raise NotImplementedError
+    def from_dict(cls, dict: dict):
+        return cls(
+            slot=dict["slot"],
+            commitment=dict["commitment"],
+            blockhash=dict["blockhash"],
+            previous_blockhash=dict["previous_blockhash"],
+            parent_slot=dict["parent_slot"],
+            rewards=dict["rewards"],
+            block_time=dict["block_time"],
+            block_height=dict["block_height"],
+            transactions=[
+                Transaction.from_json(tr_json) for tr_json in dict["transactions"]
+            ],
+            signatures=dict["signatures"],
+        )
 
     def to_json(self):
         return {
@@ -81,6 +94,24 @@ class Transaction(Model):
     def _id(self):
         return self.signatures[0]
 
+    @classmethod
+    def from_dict(cls, dict: dict):
+        return cls(
+            signatures=dict["signatures"],
+            block=dict["block"],
+            err=dict["err"],
+            fee=dict["fee"],
+            rewards=dict["rewards"],
+            transaction_accounts=[
+                AccountTransaction.from_json(tr_acc)
+                for tr_acc in dict["transaction_accounts"]
+            ],
+            transaction_instructions=[
+                InstructionTransaction.from_json(tr_inst)
+                for tr_inst in dict["transaction_instructions"]
+            ],
+        )
+
     def to_json(self):
         return {
             "signatures": self.signatures,
@@ -120,6 +151,18 @@ class AccountTransaction(Model):
     def _id(self):
         return (self.transaction_id, self.pubkey)
 
+    @classmethod
+    def from_dict(cls, dict: dict):
+        return cls(
+            transaction_id=dict["transaction_id"],
+            pubkey=dict["pubkey"],
+            pre_balance=dict["pre_balance"],
+            post_balance=dict["post_balance"],
+            read_only=dict["read_only"],
+            signed=dict["signed"],
+            signature=dict["signature"],
+        )
+
     def to_json(self):
         return {
             "pubkey": self.pubkey,
@@ -150,6 +193,16 @@ class InstructionTransaction(Model):
     @property
     def _id(self):
         return (self.transaction_id, self.instruction_idx)
+
+    @classmethod
+    def from_dict(cls, dict: dict):
+        return cls(
+            transaction_id=dict["transaction_id"],
+            instruction_idx=dict["instruction_idx"],
+            accounts=dict["accounts"],
+            data=dict["data"],
+            program_account=dict["program_account"],
+        )
 
     def to_json(self):
         return {
