@@ -1,6 +1,4 @@
-from pathlib import Path
 from typing import Dict, Union, List
-from datetime import datetime
 
 from utils import FINALIZED, CONFIRMED, PROCESSED, Model
 
@@ -16,8 +14,8 @@ class Block(Model):
         rewards: List[Dict],
         block_time: int,
         block_height: int,
-        signatures: List[str] = [],
-        transactions: List = [],
+        signatures: List[str],
+        transactions: List,
     ):
         self.slot = slot
         self.commitment = commitment
