@@ -14,7 +14,7 @@ class JSONable:
             jsonish = jsonish.read_text()
         if isinstance(jsonish, str):
             jsonish = json.loads(jsonish)
-        return cls.from_json_dict(jsonish)
+        return cls.from_dict(jsonish)
 
     def to_json(self):
         raise NotImplementedError

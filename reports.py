@@ -1,3 +1,4 @@
+from importlib.metadata import metadata
 from typing import List, Union
 
 import matplotlib.pyplot as plt
@@ -94,6 +95,15 @@ class BlocksReport(Report):
     def __init__(self, metadata, results):
         self.metadata = metadata
         self.results = results
+
+    @classmethod
+    def from_dict(cls, dict: dict):
+        return cls(
+            metadata=None,
+            results={
+                "blocks": {key: Block.from_json(block) for key, block in dict.items()}
+            },
+        )
 
     def to_json(self):
         return {key: block.to_json() for key, block in self.results["blocks"].items()}
