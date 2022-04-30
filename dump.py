@@ -103,7 +103,7 @@ def parse_transaction_instructions(transaction_json, transaction_id):
     ]
 
 
-def dump(
+def dump_blocks(
     api_client: Client,
     blocks_slots: List[int],
     dump_dir: Path,
@@ -128,3 +128,38 @@ def dump(
                 json.dump(block.to_json(), fp)
         except:
             time.sleep(10)
+
+
+def dump_epoch_leader_schedule(
+    api_client: Client, some_epoch_slot: int, dump_dir: Path
+):
+    leader_schedule = api_client.get_leader_schedule(some_epoch_slot)[RESULT]
+    with open(dump_dir / f"leader_schedule.json", "w") as fp:
+        json.dump(leader_schedule, fp)
+
+
+def dump_epoch(api_client: Client, epoch: int, dump_dir: Path, first_n_slots=-1):
+
+    epoch_info = api_client.get_epoch_info()[RESULT]
+    epoch_schedule = api_client.get_epoch_schedule()[RESULT]
+    current_epoch = epoch_info[EPOCH]
+    first_normal_epoch = epoch_schedule[FIRST_NORMAL_EPOCH]
+    assert (
+        first_normal_epoch <= epoch <= current_epoch
+    ), "Epoch does not exist yet or it was not of stable length"
+
+    dump_dir = dump_dir / str(epoch)
+    dump_dir.mkdir(parents=True, exist_ok=True)
+
+    first_normal_slot = epoch_schedule[FIRST_NORMAL_EPOCH]
+    slots_per_epoch = epoch_schedule[SLOTS_PER_EPOCH]
+
+    low_bound = first_normal_slot + slots_per_epoch * (epoch - first_normal_epoch)
+    up_bound = low_bound + slots_per_epoch
+
+    blocks_dir = dump_dir / "blocks"
+    blocks_dir.mkdir(parents=True, exist_ok=True)
+    dump_blocks(
+        api_client, list(range(low_bound, up_bound + 1))[:first_n_slots], blocks_dir
+    )
+    dump_epoch_leader_schedule(api_client, low_bound, dump_dir)

@@ -37,6 +37,10 @@ PROGRAM_ID_INDEX = "programIdIndex"
 LAMPORTS = "lamports"
 REWARD_TYPE = "rewardType"
 RENT = "Rent"
+EPOCH = "epoch"
+FIRST_NORMAL_EPOCH = "firstNormalEpoch"
+FIRST_NORMAL_SLOT = "firstNormalSlot"
+SLOTS_PER_EPOCH = "slotsPerEpoch"
 
 
 RESULT = "result"
