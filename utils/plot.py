@@ -20,8 +20,10 @@ def plot_bars(
     if ticks is None:
         xticks = np.array(range(len(labels)))
         xtickslabels = labels[xticks]
+        rotation = 0
     else:
-        xticks, xtickslabels = ticks
+        xticks, xtickslabels, rotation = ticks
 
     ax.set_xticks(xticks)
     ax.set_xticklabels(xtickslabels)
+    ax.tick_params(axis="x", labelrotation=rotation)

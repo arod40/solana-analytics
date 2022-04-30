@@ -34,6 +34,9 @@ NUM_REQUIRED_SIGNATURES = "numRequiredSignatures"
 VALUE = "value"
 ACCOUNTS = "accounts"
 PROGRAM_ID_INDEX = "programIdIndex"
+LAMPORTS = "lamports"
+REWARD_TYPE = "rewardType"
+RENT = "Rent"
 
 
 RESULT = "result"
