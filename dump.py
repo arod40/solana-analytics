@@ -130,10 +130,12 @@ def dump_blocks(
             time.sleep(10)
 
 
-def dump_epoch_leader_schedule(
-    api_client: Client, some_epoch_slot: int, dump_dir: Path
-):
-    leader_schedule = api_client.get_leader_schedule(some_epoch_slot)[RESULT]
+def dump_epoch_leader_schedule(api_client: Client, first_slot: int, dump_dir: Path):
+    leader_schedule = api_client.get_leader_schedule(first_slot)[RESULT]
+    leader_schedule = {
+        pubkey: [first_slot + slot_offset for slot_offset in slots]
+        for pubkey, slots in leader_schedule.items()
+    }
     with open(dump_dir / f"leader_schedule.json", "w") as fp:
         json.dump(leader_schedule, fp)
 
@@ -163,3 +165,8 @@ def dump_epoch(api_client: Client, epoch: int, dump_dir: Path, first_n_slots=-1)
         api_client, list(range(low_bound, up_bound + 1))[:first_n_slots], blocks_dir
     )
     dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
+
+
+dump_epoch_leader_schedule(
+    Client(f"https://api.mainnet-beta.solana.com"), 131328000, Path("data/304")
+)

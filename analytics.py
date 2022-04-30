@@ -1,4 +1,5 @@
 from cProfile import label
+from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -74,7 +75,36 @@ def plot_leaders_pie_chart(data_dir, epoch, other_share=1 / 3):
     plt.show()
 
 
+def plot_validator_block_production(data_dir, epoch, slots_range):
+    schedule = json.loads((data_dir / str(epoch) / "leader_schedule.json").read_text())
+    schedule_inv = {
+        slot: pubkey for pubkey, slots in schedule.items() for slot in slots
+    }
+    total = defaultdict(int)
+    missed = defaultdict(int)
+
+    existing_blocks = set()
+    for slot in slots_range:
+        if (data_dir / str(epoch) / "blocks" / f"{slot}.json").exists():
+            existing_blocks.add(slot)
+
+    for slot in slots_range:
+        total[schedule_inv[slot]] += 1
+        if slot not in existing_blocks:
+            missed[schedule_inv[slot]] += 1
+
+    _, ax = plt.subplots(1, 1)
+    plot_bars(ax, total, "green", "assigned", move=0, width=0.25)
+    plot_bars(ax, missed, "red", "missed", move=0, width=0.25)
+
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
     plot_rent_collected(Path("data"), list(range(131856396, 131856404)))
     plot_number_of_transactions(Path("data"), list(range(131856396, 131856404)))
     plot_leaders_pie_chart(Path("data"), 304)
+    plot_validator_block_production(
+        Path("data"), 304, list(range(131328000, 131328050))
+    )
