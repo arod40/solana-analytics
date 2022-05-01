@@ -4,7 +4,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from models import Block
+from models import Block, VoteInstruction
 from utils.constants import *
 from utils.plot import plot_bars
 
@@ -120,6 +120,41 @@ def plot_validator_block_production(data_dir, epoch, slots_range):
     plt.show()
 
 
+def plot_validators_voting(data_dir, epoch, slots_range, validators):
+    votes = {pubkey: {"X": [], "y": []} for pubkey in validators}
+    for slot in tqdm(slots_range):
+        block_file = data_dir / str(epoch) / "blocks" / f"{slot}.json"
+        if block_file.exists():
+            block = Block.from_json(block_file)
+            for vote in [
+                tr_inst.data[INFO]
+                for tr in block.transactions
+                for tr_inst in tr.transaction_instructions
+                if tr_inst.program_account == VOTE_PROGRAM_ACCOUNT
+                and tr_inst.data[TYPE] == VOTE
+            ]:
+                authority = vote[VOTE_AUTHORITY]
+                vote_slots = vote[VOTE][SLOTS]
+                if authority in validators:
+                    votes[authority]["X"] += [slot] * len(vote_slots)
+                    votes[authority]["y"] += vote_slots
+
+    _, ax = plt.subplots(1, 1)
+    colors = [f"C{i}" for i in range(len(validators))]
+    for validator, color in zip(validators, colors):
+        ax.scatter(
+            votes[validator]["X"],
+            votes[validator]["y"],
+            color=color,
+            label=f"{validator[:10]}...",
+        )
+
+    ax.set_xlabel("slot voted in")
+    ax.set_ylabel("slot voted for")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
     plot_rent_collected(Path("data/304/blocks"), list(range(131328000, 131329000)))
     plot_number_of_transactions(
@@ -128,4 +163,15 @@ if __name__ == "__main__":
     plot_leaders_pie_chart(Path("data"), 304)
     plot_validator_block_production(
         Path("data"), 304, list(range(131328000, 131329000))
+    )
+    plot_validators_voting(
+        Path("data"),
+        305,
+        range(131760000, 131760100),
+        [
+            "4o27cX8MsYmyzbYq9V5a2aMTW6eC4wxonVfkik6xGYHD",
+            "H2oJUXwghyv6BwZH68jobU8jGutBji4v3WbPA96kc5Yd",
+            "6bdb3cRscVm1HTNNvgR8bumjSsQd2fbuFjwANtCLHC8f",
+            "AKxcADuF5Fvfidz9jvsN53dFJchjKQQJbhK3jMtacQML",
+        ],
     )

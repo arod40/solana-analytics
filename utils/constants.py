@@ -46,6 +46,12 @@ PARSED = "parsed"
 PROGRAM = "program"
 WRITABLE = "writable"
 SIGNER = "signer"
+VOTE_PROGRAM_ACCOUNT = "Vote111111111111111111111111111111111111111"
+INFO = "info"
+VOTE_AUTHORITY = "voteAuthority"
+VOTE = "vote"
+SLOTS = "slots"
+TYPE = "type"
 
 
 RESULT = "result"

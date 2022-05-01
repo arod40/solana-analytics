@@ -161,4 +161,4 @@ def dump_epoch(api_client: Client, epoch: int, dump_dir: Path, first_n_slots=-1)
     dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
 
 
-dump_epoch(Client(f"https://api.mainnet-beta.solana.com"), 305, Path("data"), 10)
+dump_epoch(Client(f"https://api.mainnet-beta.solana.com"), 305, Path("data"), 1000)

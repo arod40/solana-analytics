@@ -212,3 +212,35 @@ class BlockStakeCommitment(Model):
     def __init__(self, stake_votes, total_epoch_active_stake):
         self.stake_votes = stake_votes
         self.total_epoch_active_stake = total_epoch_active_stake
+
+
+class VoteInstruction(Model):
+    def __init__(self, vote_authority=None, vote_account=None, hash=None, timestamp=None, slots=None):
+        self.vote_authority=vote_authority
+        self.vote_account = vote_account
+        self.hash = hash
+        self.timestamp = timestamp
+        self.slots = slots
+
+    @property
+    def _id(self):
+        return self.hash
+
+    @classmethod
+    def from_dict(cls, dict: dict):
+        return cls(
+            vote_authority=dict["vote_authority"],
+            vote_account=dict["vote_account"],
+            hash=dict["hash"],
+            timestamp=dict["timestamp"],
+            slots=dict["slots"],
+        )
+
+    def to_json(self):
+        return {
+            "vote_authority": self.vote_authority,
+            "vote_account": self.vote_account,
+            "hash": self.hash,
+            "timestamp": self.timestamp,
+            "slots": self.slots,
+        }
