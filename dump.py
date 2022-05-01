@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List
 
 from solana.rpc.api import Client
+from solana.exceptions import SolanaRpcException
 from tqdm import tqdm
 
 from models import AccountTransaction, Block, InstructionTransaction, Transaction
@@ -50,38 +51,21 @@ def parse_transaction_accounts(transaction_json, transaction_id):
     account_keys = transaction_json[TRANSACTION][MESSAGE][ACCOUNT_KEYS]
     pre_balances = transaction_json[META][PRE_BALANCES]
     posts_balances = transaction_json[META][POST_BALANCES]
-    num_readonly_signed_accounts = transaction_json[TRANSACTION][MESSAGE][HEADER][
-        NUM_READONLY_SIGNED_ACCOUNTS
-    ]
-    num_readonly_unsigned_accounts = transaction_json[TRANSACTION][MESSAGE][HEADER][
-        NUM_READONLY_UNSIGNED_ACCOUNTS
-    ]
-    num_required_signatures = transaction_json[TRANSACTION][MESSAGE][HEADER][
-        NUM_REQUIRED_SIGNATURES
-    ]
-    readonly = [
-        num_required_signatures - num_readonly_signed_accounts
-        < i
-        < num_required_signatures
-        or i > len(account_keys) - num_readonly_unsigned_accounts
-        for i in range(len(account_keys))
-    ]
-    signed = [i < num_required_signatures for i in range(len(account_keys))]
     signatures = transaction_json[TRANSACTION][SIGNATURES] + [None] * (
-        len(account_keys) - num_required_signatures
+        len(account_keys)
     )
     return [
         AccountTransaction(
             transaction_id=transaction_id,
-            pubkey=pubkey,
+            pubkey=key_info[PUBKEY],
             pre_balance=pre_balance,
             post_balance=post_balance,
-            read_only=is_readonly,
-            signed=is_signed,
+            read_only=not key_info[WRITABLE],
+            signed=key_info[SIGNER],
             signature=signature,
         )
-        for pubkey, pre_balance, post_balance, is_readonly, is_signed, signature in zip(
-            account_keys, pre_balances, posts_balances, readonly, signed, signatures
+        for key_info, pre_balance, post_balance, signature in zip(
+            account_keys, pre_balances, posts_balances, signatures
         )
     ]
 
@@ -89,13 +73,21 @@ def parse_transaction_accounts(transaction_json, transaction_id):
 def parse_transaction_instructions(transaction_json, transaction_id):
 
     account_keys = transaction_json[TRANSACTION][MESSAGE][ACCOUNT_KEYS]
+
     return [
         InstructionTransaction(
-            transaction_id=transaction_id,
-            instruction_idx=idx,
-            accounts=[account_keys[i] for i in instruction_json[ACCOUNTS]],
-            data=instruction_json[DATA],
-            program_account=account_keys[instruction_json[PROGRAM_ID_INDEX]],
+            data=instruction_json[DATA]
+            if DATA in instruction_json
+            else instruction_json[PARSED],
+            program_account=account_keys[instruction_json[PROGRAM_ID_INDEX]]
+            if PROGRAM_ID_INDEX in instruction_json
+            else instruction_json[PROGRAM_ID],
+            accounts=instruction_json[ACCOUNTS]
+            if ACCOUNTS in instruction_json
+            else None,
+            program_name=instruction_json[PROGRAM]
+            if PROGRAM in instruction_json
+            else None,
         )
         for idx, instruction_json in enumerate(
             transaction_json[TRANSACTION][MESSAGE][INSTRUCTIONS]
@@ -112,7 +104,7 @@ def dump_blocks(
         try:
             print(f"Processing block {i+1}/{len(blocks_slots)}: {slot}")
 
-            block_json = api_client.get_block(slot)
+            block_json = api_client.get_block(slot, encoding="jsonParsed")
             if RESULT not in block_json:
                 print("Skipped!")
                 continue
@@ -126,8 +118,10 @@ def dump_blocks(
 
             with open(dump_dir / f"{slot}.json", "w") as fp:
                 json.dump(block.to_json(), fp)
-        except:
+        except SolanaRpcException:
             time.sleep(10)
+        except Exception as e:
+            raise e
 
 
 def dump_epoch_leader_schedule(api_client: Client, first_slot: int, dump_dir: Path):
@@ -167,6 +161,4 @@ def dump_epoch(api_client: Client, epoch: int, dump_dir: Path, first_n_slots=-1)
     dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
 
 
-dump_epoch_leader_schedule(
-    Client(f"https://api.mainnet-beta.solana.com"), 131328000, Path("data/304")
-)
+dump_epoch(Client(f"https://api.mainnet-beta.solana.com"), 305, Path("data"), 10)

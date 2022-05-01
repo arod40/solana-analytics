@@ -176,17 +176,15 @@ class AccountTransaction(Model):
 class InstructionTransaction(Model):
     def __init__(
         self,
-        transaction_id=None,
-        instruction_idx=None,
         accounts=None,
         data=None,
         program_account=None,
+        program_name=None,
     ):
-        self.transaction_id = transaction_id
-        self.instruction_idx = instruction_idx
         self.accounts = accounts
         self.data = data
         self.program_account = program_account
+        self.program_name = program_name
 
     @property
     def _id(self):
@@ -195,20 +193,18 @@ class InstructionTransaction(Model):
     @classmethod
     def from_dict(cls, dict: dict):
         return cls(
-            transaction_id=dict["transaction_id"],
-            instruction_idx=dict["instruction_idx"],
             accounts=dict["accounts"],
             data=dict["data"],
             program_account=dict["program_account"],
+            program_name=dict["program_name"],
         )
 
     def to_json(self):
         return {
-            "transaction_id": self.transaction_id,
-            "instruction_idx": self.instruction_idx,
             "accounts": self.accounts,
             "data": self.data,
             "program_account": self.program_account,
+            "program_name": self.program_name,
         }
 
 

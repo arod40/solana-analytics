@@ -41,6 +41,11 @@ EPOCH = "epoch"
 FIRST_NORMAL_EPOCH = "firstNormalEpoch"
 FIRST_NORMAL_SLOT = "firstNormalSlot"
 SLOTS_PER_EPOCH = "slotsPerEpoch"
+PROGRAM_ID = "programId"
+PARSED = "parsed"
+PROGRAM = "program"
+WRITABLE = "writable"
+SIGNER = "signer"
 
 
 RESULT = "result"
