@@ -3,6 +3,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from models import Block, VoteInstruction
 from utils.constants import *
@@ -34,13 +35,36 @@ def plot_rent_collected(data_dir, slot_range):
                     if rw[REWARD_TYPE] == RENT and rw[LAMPORTS] > 0
                 ]
             )
+        else:
+            rent[slot] = 0
+            given[slot] = 0
 
     _, ax = plt.subplots(1, 1)
 
-    plot_bars(ax, rent, "blue", "rent", move=0, width=0.75)
-    plot_bars(ax, given, "green", "given", move=0, width=0.75)
-    ax.set_xlabel("slots")
-    ax.set_ylabel("rent(lamports)")
+    labels = np.array(slot_range)
+    xticks = np.linspace(0, len(labels) - 1, 5, dtype=np.int32)
+    xtickslabels = [l for l in labels[xticks]]
+    rotation = 0
+    plot_bars(
+        ax,
+        rent,
+        "blue",
+        "rent",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
+    plot_bars(
+        ax,
+        given,
+        "green",
+        "given",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
+    ax.set_xlabel("slot")
+    ax.set_ylabel("rent (lamports)")
     plt.legend()
     plt.show()
 
@@ -54,11 +78,33 @@ def plot_number_of_transactions(data_dir, slot_range):
             block: Block = Block.from_json(block_file)
             total[slot] = len(block.transactions)
             fail[slot] = len([tr for tr in block.transactions if tr.err is not None])
+        else:
+            total[slot] = 0
+            fail[slot] = 0
 
     _, ax = plt.subplots(1, 1)
-
-    plot_bars(ax, total, "green", "total", move=0, width=0.75)
-    plot_bars(ax, fail, "red", "fail", move=0, width=0.75)
+    labels = np.array(slot_range)
+    xticks = np.linspace(0, len(labels) - 1, 5, dtype=np.int32)
+    xtickslabels = [l for l in labels[xticks]]
+    rotation = 0
+    plot_bars(
+        ax,
+        total,
+        "green",
+        "total",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
+    plot_bars(
+        ax,
+        fail,
+        "red",
+        "fail",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
     ax.set_xlabel("slots")
     ax.set_ylabel("number of transactions")
     plt.legend()
@@ -84,7 +130,8 @@ def plot_leaders_pie_chart(data_dir, epoch, other_share=1 / 3):
             labels.append("other")
             fracs.append(total - acc)
             break
-        labels.append(pubkey)
+        # labels.append(pubkey)
+        labels.append(None)
         fracs.append(num)
         acc += num
 
@@ -103,7 +150,7 @@ def plot_validator_block_production(data_dir, epoch, slots_range):
     missed = defaultdict(int)
 
     existing_blocks = set()
-    for slot in slots_range:
+    for slot in tqdm(slots_range):
         if (data_dir / str(epoch) / "blocks" / f"{slot}.json").exists():
             existing_blocks.add(slot)
 
@@ -113,9 +160,31 @@ def plot_validator_block_production(data_dir, epoch, slots_range):
             missed[schedule_inv[slot]] += 1
 
     _, ax = plt.subplots(1, 1)
-    plot_bars(ax, total, "green", "assigned", move=0, width=0.75)
-    plot_bars(ax, missed, "red", "missed", move=0, width=0.75)
+    labels = np.array(list(total.keys()))
+    xticks = []
+    xtickslabels = []
+    rotation = 0
+    plot_bars(
+        ax,
+        total,
+        "green",
+        "assigned",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
+    plot_bars(
+        ax,
+        missed,
+        "red",
+        "missed",
+        move=0,
+        width=0.75,
+        ticks=(xticks, xtickslabels, rotation),
+    )
 
+    ax.set_xlabel("validator")
+    ax.set_ylabel("leader slots")
     plt.legend()
     plt.show()
 
@@ -156,22 +225,22 @@ def plot_validators_voting(data_dir, epoch, slots_range, validators):
 
 
 if __name__ == "__main__":
-    plot_rent_collected(Path("data/304/blocks"), list(range(131328000, 131329000)))
-    plot_number_of_transactions(
-        Path("data/304/blocks"), list(range(131328000, 131329000))
-    )
-    plot_leaders_pie_chart(Path("data"), 304)
+    # plot_rent_collected(Path("data/305/blocks"), list(range(131760000, 131760100)))
+    # plot_number_of_transactions(
+    #     Path("data/305/blocks"), list(range(131760000, 131760980))
+    # )
+    # plot_leaders_pie_chart(Path("data"), 305)
     plot_validator_block_production(
-        Path("data"), 304, list(range(131328000, 131329000))
+        Path("data"), 305, list(range(131760000, 131760980))
     )
-    plot_validators_voting(
-        Path("data"),
-        305,
-        range(131760000, 131760100),
-        [
-            "4o27cX8MsYmyzbYq9V5a2aMTW6eC4wxonVfkik6xGYHD",
-            "H2oJUXwghyv6BwZH68jobU8jGutBji4v3WbPA96kc5Yd",
-            "6bdb3cRscVm1HTNNvgR8bumjSsQd2fbuFjwANtCLHC8f",
-            "AKxcADuF5Fvfidz9jvsN53dFJchjKQQJbhK3jMtacQML",
-        ],
-    )
+    # plot_validators_voting(
+    #     Path("data"),
+    #     305,
+    #     range(131760000, 131760100),
+    #     [
+    #         "4o27cX8MsYmyzbYq9V5a2aMTW6eC4wxonVfkik6xGYHD",
+    #         "H2oJUXwghyv6BwZH68jobU8jGutBji4v3WbPA96kc5Yd",
+    #         "6bdb3cRscVm1HTNNvgR8bumjSsQd2fbuFjwANtCLHC8f",
+    #         "AKxcADuF5Fvfidz9jvsN53dFJchjKQQJbhK3jMtacQML",
+    #     ],
+    # )
