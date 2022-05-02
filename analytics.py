@@ -1,9 +1,11 @@
 from cProfile import label
 from collections import defaultdict
 from pathlib import Path
+from matplotlib.lines import Line2D
 
 import matplotlib.pyplot as plt
 import numpy as np
+from bpc import dbscan_cluster_vote_behavior, get_vote_behavior
 
 from models import Block, VoteInstruction
 from utils.constants import *
@@ -141,7 +143,7 @@ def plot_leaders_pie_chart(data_dir, epoch, other_share=1 / 3):
     plt.show()
 
 
-def plot_validator_block_production(data_dir, epoch, slots_range):
+def plot_validator_block_production(data_dir, epoch, slot_range):
     schedule = json.loads((data_dir / str(epoch) / "leader_schedule.json").read_text())
     schedule_inv = {
         slot: pubkey for pubkey, slots in schedule.items() for slot in slots
@@ -150,11 +152,11 @@ def plot_validator_block_production(data_dir, epoch, slots_range):
     missed = defaultdict(int)
 
     existing_blocks = set()
-    for slot in tqdm(slots_range):
+    for slot in tqdm(slot_range):
         if (data_dir / str(epoch) / "blocks" / f"{slot}.json").exists():
             existing_blocks.add(slot)
 
-    for slot in slots_range:
+    for slot in slot_range:
         total[schedule_inv[slot]] += 1
         if slot not in existing_blocks:
             missed[schedule_inv[slot]] += 1
@@ -189,38 +191,51 @@ def plot_validator_block_production(data_dir, epoch, slots_range):
     plt.show()
 
 
-def plot_validators_voting(data_dir, epoch, slots_range, validators):
-    votes = {pubkey: {"X": [], "y": []} for pubkey in validators}
-    for slot in tqdm(slots_range):
-        block_file = data_dir / str(epoch) / "blocks" / f"{slot}.json"
-        if block_file.exists():
-            block = Block.from_json(block_file)
-            for vote in [
-                tr_inst.data[INFO]
-                for tr in block.transactions
-                for tr_inst in tr.transaction_instructions
-                if tr_inst.program_account == VOTE_PROGRAM_ACCOUNT
-                and tr_inst.data[TYPE] == VOTE
-            ]:
-                authority = vote[VOTE_AUTHORITY]
-                vote_slots = vote[VOTE][SLOTS]
-                if authority in validators:
-                    votes[authority]["X"] += [slot] * len(vote_slots)
-                    votes[authority]["y"] += vote_slots
+def plot_validators_voting(data_dir, epoch, slot_range, validators):
+    votes = get_vote_behavior(data_dir, epoch, slot_range)
 
     _, ax = plt.subplots(1, 1)
-    colors = [f"C{i}" for i in range(len(validators))]
-    for validator, color in zip(validators, colors):
-        ax.scatter(
-            votes[validator]["X"],
-            votes[validator]["y"],
-            color=color,
+    for validator in validators:
+        first_vote = votes[validator][FIRST_VOTE]
+        validator_votes = votes[validator][VOTES]
+        ax.plot(
+            range(first_vote, first_vote + len(validator_votes)),
+            [vote - slot_range[0] for vote in validator_votes],
             label=f"{validator[:10]}...",
         )
 
-    ax.set_xlabel("slot voted in")
-    ax.set_ylabel("slot voted for")
+    ax.set_xlabel("slot")
+    ax.set_ylabel("max slot voted")
     plt.legend()
+    plt.show()
+
+
+def plot_voting_outlier_behavior(data_dir, epoch, slot_range, sensibility=2):
+    votes, first_votes, labels = dbscan_cluster_vote_behavior(
+        data_dir, epoch, slot_range, sensibility=sensibility
+    )
+    for validator_votes, first_vote, cl in zip(votes, first_votes, labels):
+        if cl == -1:
+            plt.plot(
+                range(first_vote, first_vote + len(validator_votes)),
+                [vote - slot_range[0] for vote in validator_votes],
+                color="red",
+            )
+        else:
+            plt.plot(
+                range(first_vote, first_vote + len(validator_votes)),
+                [vote - slot_range[0] for vote in validator_votes],
+                color="blue",
+            )
+
+    plt.xlabel("slot")
+    plt.ylabel("max slot voted")
+    custom_lines = [
+        Line2D([0], [0], color="blue", lw=4),
+        Line2D([0], [0], color="red", lw=4),
+    ]
+
+    plt.legend(custom_lines, ["normal", "outliers"])
     plt.show()
 
 
@@ -230,9 +245,9 @@ if __name__ == "__main__":
     #     Path("data/305/blocks"), list(range(131760000, 131760980))
     # )
     # plot_leaders_pie_chart(Path("data"), 305)
-    plot_validator_block_production(
-        Path("data"), 305, list(range(131760000, 131760980))
-    )
+    # plot_validator_block_production(
+    #     Path("data"), 305, list(range(131760000, 131760980))
+    # )
     # plot_validators_voting(
     #     Path("data"),
     #     305,
@@ -244,3 +259,7 @@ if __name__ == "__main__":
     #         "AKxcADuF5Fvfidz9jvsN53dFJchjKQQJbhK3jMtacQML",
     #     ],
     # )
+
+    plot_voting_outlier_behavior(
+        Path("data"), 305, range(131760000, 131760100), sensibility=2
+    )

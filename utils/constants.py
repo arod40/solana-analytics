@@ -52,6 +52,8 @@ VOTE_AUTHORITY = "voteAuthority"
 VOTE = "vote"
 SLOTS = "slots"
 TYPE = "type"
+VOTES = "votes"
+FIRST_VOTE = "first_vote"
 
 
 RESULT = "result"
