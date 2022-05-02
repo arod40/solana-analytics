@@ -1,14 +1,47 @@
+"""
+Usage:
+    dump.py --cluster=<str> --epoch=<int> --data-dir=<file> [options]
+
+Options:
+    -h --help                                                    show this screen.
+    --cluster=['mainnet-beta' | 'devnet' | 'testnet']            name of the Solana cluster to target (mainnet-beta / devnet / testnet)
+    --epoch=<int>                                                epoch to capture
+    --data-dir=<file>                                            directory to store the data
+    --from-slot=<int>                                            initial slot to capture [default: 0]
+    --total-slots=<int>                                          number of slots to capture, default all of them [default: -1]
+"""
+
+
+from argparse import ArgumentError
 import json
 import time
 from pathlib import Path
 from typing import List
 
-from solana.rpc.api import Client
+from docopt import docopt
 from solana.exceptions import SolanaRpcException
+from solana.rpc.api import Client
 from tqdm import tqdm
 
 from models import AccountTransaction, Block, InstructionTransaction, Transaction
 from utils.constants import *
+
+
+def get_epoch_bounds(api_client: Client, epoch: int):
+    epoch_info = api_client.get_epoch_info()[RESULT]
+    epoch_schedule = api_client.get_epoch_schedule()[RESULT]
+    current_epoch = epoch_info[EPOCH]
+    first_normal_epoch = epoch_schedule[FIRST_NORMAL_EPOCH]
+    if not (first_normal_epoch <= epoch <= current_epoch):
+        raise ArgumentError("Epoch does not exist yet or it was not of stable length")
+
+    first_normal_slot = epoch_schedule[FIRST_NORMAL_EPOCH]
+    slots_per_epoch = epoch_schedule[SLOTS_PER_EPOCH]
+
+    low_bound = first_normal_slot + slots_per_epoch * (epoch - first_normal_epoch)
+    up_bound = low_bound + slots_per_epoch
+
+    return low_bound, up_bound
 
 
 def parse_block(block_json, slot, commitment):
@@ -134,31 +167,41 @@ def dump_epoch_leader_schedule(api_client: Client, first_slot: int, dump_dir: Pa
         json.dump(leader_schedule, fp)
 
 
-def dump_epoch(api_client: Client, epoch: int, dump_dir: Path, first_n_slots=-1):
-
-    epoch_info = api_client.get_epoch_info()[RESULT]
-    epoch_schedule = api_client.get_epoch_schedule()[RESULT]
-    current_epoch = epoch_info[EPOCH]
-    first_normal_epoch = epoch_schedule[FIRST_NORMAL_EPOCH]
-    assert (
-        first_normal_epoch <= epoch <= current_epoch
-    ), "Epoch does not exist yet or it was not of stable length"
+def dump_epoch(
+    api_client: Client, epoch: int, dump_dir: Path, from_slot=0, total_slots=-1
+):
+    epoch_bounds = get_epoch_bounds(http_client, epoch)
+    low_bound, up_bound = epoch_bounds
 
     dump_dir = dump_dir / str(epoch)
     dump_dir.mkdir(parents=True, exist_ok=True)
 
-    first_normal_slot = epoch_schedule[FIRST_NORMAL_EPOCH]
-    slots_per_epoch = epoch_schedule[SLOTS_PER_EPOCH]
-
-    low_bound = first_normal_slot + slots_per_epoch * (epoch - first_normal_epoch)
-    up_bound = low_bound + slots_per_epoch
+    if total_slots == -1:
+        total_slots = up_bound - low_bound
 
     blocks_dir = dump_dir / "blocks"
     blocks_dir.mkdir(parents=True, exist_ok=True)
     dump_blocks(
-        api_client, list(range(low_bound, up_bound + 1))[:first_n_slots], blocks_dir
+        api_client,
+        list(range(low_bound, up_bound))[from_slot : from_slot + total_slots],
+        blocks_dir,
     )
     dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
 
 
-dump_epoch(Client(f"https://api.mainnet-beta.solana.com"), 305, Path("data"), 1000)
+if __name__ == "__main__":
+    args = docopt(__doc__)
+    cluster = args["--cluster"]
+    if cluster not in [MAINNET, DEVNET, TESTNET]:
+        raise ArgumentError(
+            f"--cluster must be one of '{MAINNET}', '{DEVNET}', '{TESTNET}'"
+        )
+    http_client = Client(f"https://api.{cluster}.solana.com")
+
+    dump_epoch(
+        http_client,
+        int(args["--epoch"]),
+        Path(args["--data-dir"]),
+        int(args["--from-slot"]),
+        int(args["--total-slots"]),
+    )

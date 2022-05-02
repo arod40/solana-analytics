@@ -1,3 +1,7 @@
+MAINNET = "mainnet-beta"
+DEVNET = "devnet"
+TESTNET = "testnet"
+
 FINALIZED = "finalized"
 CONFIRMED = "confirmed"
 PROCESSED = "processed"
