@@ -1,24 +1,10 @@
-"""
-Usage:
-    dump.py --cluster=<str> --epoch=<int> --data-dir=<file> [options]
-
-Options:
-    -h --help                                                    show this screen.
-    --cluster=['mainnet-beta' | 'devnet' | 'testnet']            name of the Solana cluster to target (mainnet-beta / devnet / testnet)
-    --epoch=<int>                                                epoch to capture
-    --data-dir=<file>                                            directory to store the data
-    --from-slot=<int>                                            initial slot to capture [default: 0]
-    --total-slots=<int>                                          number of slots to capture, default all of them [default: -1]
-"""
-
-
-from argparse import ArgumentError
+import argparse
 import json
 import time
+from argparse import ArgumentError
 from pathlib import Path
 from typing import List
 
-from docopt import docopt
 from solana.exceptions import SolanaRpcException
 from solana.rpc.api import Client
 from tqdm import tqdm
@@ -168,7 +154,12 @@ def dump_epoch_leader_schedule(api_client: Client, first_slot: int, dump_dir: Pa
 
 
 def dump_epoch(
-    api_client: Client, epoch: int, dump_dir: Path, from_slot=0, total_slots=-1
+    api_client: Client,
+    epoch: int,
+    dump_dir: Path,
+    from_slot=0,
+    to_slot=-1,
+    dump_schedule=False,
 ):
     epoch_bounds = get_epoch_bounds(http_client, epoch)
     low_bound, up_bound = epoch_bounds
@@ -176,32 +167,51 @@ def dump_epoch(
     dump_dir = dump_dir / str(epoch)
     dump_dir.mkdir(parents=True, exist_ok=True)
 
-    if total_slots == -1:
-        total_slots = up_bound - low_bound
-
     blocks_dir = dump_dir / "blocks"
     blocks_dir.mkdir(parents=True, exist_ok=True)
+
+    if to_slot == -1:
+        to_slot = up_bound - low_bound
     dump_blocks(
         api_client,
-        list(range(low_bound, up_bound))[from_slot : from_slot + total_slots],
+        list(range(low_bound, up_bound))[from_slot:to_slot],
         blocks_dir,
     )
-    dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
+    if dump_schedule:
+        dump_epoch_leader_schedule(api_client, low_bound, dump_dir)
 
 
 if __name__ == "__main__":
-    args = docopt(__doc__)
-    cluster = args["--cluster"]
-    if cluster not in [MAINNET, DEVNET, TESTNET]:
-        raise ArgumentError(
-            f"--cluster must be one of '{MAINNET}', '{DEVNET}', '{TESTNET}'"
-        )
-    http_client = Client(f"https://api.{cluster}.solana.com")
+    CLI = argparse.ArgumentParser()
+    CLI.add_argument(
+        "cluster",
+        choices=[MAINNET, DEVNET, TESTNET],
+    )
+    CLI.add_argument("--data-dir", type=str, required=True)
+    CLI.add_argument("--epoch", type=int, required=True)
+    CLI.add_argument(
+        "--slot-range",
+        nargs=2,
+        type=int,
+        default=[0, -1],
+    )
+    CLI.add_argument(
+        "--schedule",
+        action="store_true",
+    )
+
+    # parse the command line
+    args = CLI.parse_args()
+
+    print(args.schedule)
+
+    http_client = Client(f"https://api.{args.cluster}.solana.com")
 
     dump_epoch(
         http_client,
-        int(args["--epoch"]),
-        Path(args["--data-dir"]),
-        int(args["--from-slot"]),
-        int(args["--total-slots"]),
+        args.epoch,
+        Path(args.data_dir),
+        args.slot_range[0],
+        args.slot_range[1],
+        args.schedule,
     )
