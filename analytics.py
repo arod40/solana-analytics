@@ -1,26 +1,52 @@
-from cProfile import label
+import argparse
+import json
 from collections import defaultdict
 from pathlib import Path
-from matplotlib.lines import Line2D
 
 import matplotlib.pyplot as plt
 import numpy as np
-from bpc import dbscan_cluster_vote_behavior, get_vote_behavior
-
-from models import Block, VoteInstruction
-from utils.constants import *
-from utils.plot import plot_bars
-
+from matplotlib.lines import Line2D
 from tqdm import tqdm
 
-import json
+from bpc import dbscan_cluster_vote_behavior
+from models import Block
+from utils.constants import *
+from utils.file import get_block_file, get_leader_schedule_file
+from utils.plot import plot_bars
 
 
-def plot_rent_collected(data_dir, slot_range):
+def get_vote_behavior(data_dir, epoch, slot_range):
+    votes = {}
+    for i, slot in tqdm(enumerate(slot_range)):
+        block_file = get_block_file(data_dir, epoch, slot)
+        if block_file.exists():
+            block = Block.from_json(block_file)
+            for validator in votes:
+                votes[validator][VOTES].append(votes[validator][VOTES][-1])
+
+            for vote in [
+                tr_inst.data[INFO]
+                for tr in block.transactions
+                for tr_inst in tr.transaction_instructions
+                if tr.err is None
+                and tr_inst.program_account == VOTE_PROGRAM_ACCOUNT
+                and tr_inst.data[TYPE] == VOTE
+            ]:
+                authority = vote[VOTE_AUTHORITY]
+                vote_slot = vote[VOTE][SLOTS][-1]
+                if authority not in votes:
+                    votes[authority] = {FIRST_VOTE: i + 1, VOTES: [vote_slot]}
+                else:
+                    votes[authority][VOTES][-1] = vote_slot
+
+    return votes
+
+
+def plot_rent_collected(data_dir, epoch, slot_range):
     rent = {}
     given = {}
     for slot in tqdm(slot_range):
-        block_file = data_dir / f"{slot}.json"
+        block_file = get_block_file(data_dir, epoch, slot)
         if block_file.exists():
             block: Block = Block.from_json(block_file)
             rent[slot] = sum(
@@ -71,11 +97,11 @@ def plot_rent_collected(data_dir, slot_range):
     plt.show()
 
 
-def plot_number_of_transactions(data_dir, slot_range):
+def plot_number_of_transactions(data_dir, epoch, slot_range):
     total = {}
     fail = {}
     for slot in tqdm(slot_range):
-        block_file = data_dir / f"{slot}.json"
+        block_file = get_block_file(data_dir, epoch, slot)
         if block_file.exists():
             block: Block = Block.from_json(block_file)
             total[slot] = len(block.transactions)
@@ -114,7 +140,7 @@ def plot_number_of_transactions(data_dir, slot_range):
 
 
 def plot_leaders_pie_chart(data_dir, epoch, other_share=1 / 3):
-    schedule = json.loads((data_dir / str(epoch) / "leader_schedule.json").read_text())
+    schedule = json.loads(get_leader_schedule_file(data_dir, epoch).read_text())
     data = []
     total = 0
     for pubkey, slots in schedule.items():
@@ -144,7 +170,7 @@ def plot_leaders_pie_chart(data_dir, epoch, other_share=1 / 3):
 
 
 def plot_validator_block_production(data_dir, epoch, slot_range):
-    schedule = json.loads((data_dir / str(epoch) / "leader_schedule.json").read_text())
+    schedule = json.loads(get_leader_schedule_file(data_dir, epoch).read_text())
     schedule_inv = {
         slot: pubkey for pubkey, slots in schedule.items() for slot in slots
     }
@@ -153,7 +179,7 @@ def plot_validator_block_production(data_dir, epoch, slot_range):
 
     existing_blocks = set()
     for slot in tqdm(slot_range):
-        if (data_dir / str(epoch) / "blocks" / f"{slot}.json").exists():
+        if get_block_file(data_dir, epoch, slot).exists():
             existing_blocks.add(slot)
 
     for slot in slot_range:
@@ -162,7 +188,7 @@ def plot_validator_block_production(data_dir, epoch, slot_range):
             missed[schedule_inv[slot]] += 1
 
     _, ax = plt.subplots(1, 1)
-    labels = np.array(list(total.keys()))
+    # labels = np.array(list(total.keys()))
     xticks = []
     xtickslabels = []
     rotation = 0
@@ -211,9 +237,13 @@ def plot_validators_voting(data_dir, epoch, slot_range, validators):
 
 
 def plot_voting_outlier_behavior(data_dir, epoch, slot_range, sensibility=2):
-    votes, first_votes, labels = dbscan_cluster_vote_behavior(
-        data_dir, epoch, slot_range, sensibility=sensibility
-    )
+    votes = get_vote_behavior(data_dir, epoch, slot_range)
+    validators = list(votes.keys())[:100]
+
+    first_votes = [votes[pubkey][FIRST_VOTE] for pubkey in validators]
+    votes = [votes[pubkey][VOTES] for pubkey in validators]
+
+    labels = dbscan_cluster_vote_behavior(votes, sensibility=sensibility)
     for validator_votes, first_vote, cl in zip(votes, first_votes, labels):
         if cl == -1:
             plt.plot(
@@ -240,26 +270,77 @@ def plot_voting_outlier_behavior(data_dir, epoch, slot_range, sensibility=2):
 
 
 if __name__ == "__main__":
-    # plot_rent_collected(Path("data/305/blocks"), list(range(131760000, 131760100)))
-    # plot_number_of_transactions(
-    #     Path("data/305/blocks"), list(range(131760000, 131760980))
-    # )
-    # plot_leaders_pie_chart(Path("data"), 305)
-    # plot_validator_block_production(
-    #     Path("data"), 305, list(range(131760000, 131760980))
-    # )
-    # plot_validators_voting(
-    #     Path("data"),
-    #     305,
-    #     range(131760000, 131760100),
-    #     [
-    #         "4o27cX8MsYmyzbYq9V5a2aMTW6eC4wxonVfkik6xGYHD",
-    #         "H2oJUXwghyv6BwZH68jobU8jGutBji4v3WbPA96kc5Yd",
-    #         "6bdb3cRscVm1HTNNvgR8bumjSsQd2fbuFjwANtCLHC8f",
-    #         "AKxcADuF5Fvfidz9jvsN53dFJchjKQQJbhK3jMtacQML",
-    #     ],
-    # )
-
-    plot_voting_outlier_behavior(
-        Path("data"), 305, range(131760000, 131760100), sensibility=2
+    CLI = argparse.ArgumentParser()
+    CLI.add_argument(
+        "plot",
+        choices=["rent", "transactions", "leaders", "production", "votes", "outliers"],
     )
+    CLI.add_argument("--data-dir", type=str, required=True)
+    CLI.add_argument(
+        "--slot-range",
+        nargs=2,
+        type=int,
+        default=[0, -1],
+    )
+    CLI.add_argument(
+        "--validators",
+        nargs="+",
+        type=str,
+    )
+    CLI.add_argument(
+        "--epoch",
+        type=int,
+    )
+    CLI.add_argument(
+        "--other-share",
+        type=float,
+        default=1 / 3,
+    )
+    CLI.add_argument(
+        "--sensibility",
+        type=int,
+        default=2,
+    )
+
+    # parse the command line
+    args = CLI.parse_args()
+
+    if args.plot == "rent":
+        plot_rent_collected(
+            Path(args.data_dir),
+            args.epoch,
+            list(range(*args.slot_range)),
+        )
+    elif args.plot == "transactions":
+        plot_number_of_transactions(
+            Path(args.data_dir),
+            args.epoch,
+            list(range(*args.slot_range)),
+        )
+    elif args.plot == "leaders":
+        plot_leaders_pie_chart(
+            Path(args.data_dir), args.epoch, other_share=args.other_share
+        )
+    elif args.plot == "production":
+        plot_validator_block_production(
+            Path(args.data_dir),
+            args.epoch,
+            list(range(*args.slot_range)),
+        )
+    elif args.plot == "votes":
+        plot_validators_voting(
+            Path(args.data_dir),
+            args.epoch,
+            list(range(*args.slot_range)),
+            args.validators,
+        )
+    elif args.plot == "outliers":
+
+        plot_voting_outlier_behavior(
+            Path(args.data_dir),
+            args.epoch,
+            list(range(*args.slot_range)),
+            sensibility=args.sensibility,
+        )
+    else:
+        raise Exception("Invalid operation")
